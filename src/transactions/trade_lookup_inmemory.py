@@ -24,10 +24,15 @@ for file in tables:
     df=pd.read_sql_query(query,disk_conn)
     df.to_sql(file, conn, if_exists='append', index =False)
     
+sql=open('./SQLite_TPC-E/scripts/4_create_index.sql')
+cur.executescript(sql)
+sql=open('./SQLite_TPC-E/scripts/4_create_fk_index.sql')
+cur.executescript(sql)
 
+print('indexes created ')
 
-cur.execute('select * from trade limit 10;')
-print(cur.fetchall())
+#cur.execute('select * from trade limit 10;')
+#print(cur.fetchall())
 
 #frame_1
 def frame1():
