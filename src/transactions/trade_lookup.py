@@ -1,5 +1,9 @@
 import sqlite3
 import random
+import time
+import pandas as pd
+import matplotlib.pyplot as plt
+
 conn= sqlite3.connect('tpce')
 cur =conn.cursor()
 
@@ -260,38 +264,65 @@ def frame4():
     cur.fetchone()
 
 
+df_data={'number_of_transactions':[],'time_required':[]}
 
-try:
-    cur.execute('begin')
-    frame1()
-    cur.execute('commit')
-    print('frame1 commited')
-except:
-    cur.execute('rollback')
+for op in range(3):
+    print('here')
+    succesfull_transactions=0
+    start_time=time.time()
+    
+    while time.time()<start_time+30:
+        try:
+            cur.execute('begin')
+            #print('habshd')
+            frame1()
+            cur.execute('commit')
+            succesfull_transactions+=1
+            #print('frame1 commited')
+        except:
+            #print('haksdb')
+            cur.execute('rollback')
 
-try:
-    cur.execute('begin')
-    frame2()
-    cur.execute('commit')
-    print('frame2 commited')
-except:
-    cur.execute('rollback')
+        try:
+            cur.execute('begin')
+            frame2()
+            cur.execute('commit')
+            succesfull_transactions+=1
+            #print('frame2 commited')
+        except:
+            cur.execute('rollback')
 
-try:
-    cur.execute('begin')
-    frame3()
-    cur.execute('commit')
-    print('frame3 commited')
-except:
-    cur.execute('rollback')
+        try:
+            cur.execute('begin')
+            frame3()
+            cur.execute('commit')
+            succesfull_transactions+=1
+            #print('frame3 commited')
+        except:
+            cur.execute('rollback')
 
-try:
-    cur.execute('begin')
-    frame4()
-    cur.execute('commit')
-    print('frame4 commited')
-except:
-    cur.execute('rollback')
+        try:
+            cur.execute('begin')
+            frame4()
+            cur.execute('commit')
+            succesfull_transactions+=1
+            #print('frame4 commited')
+        except:
+            cur.execute('rollback')
+    #print((op+1)*1000,'trasactions attempted')
+    end_time=time.time()
+    total_time=end_time-start_time
+    df_data['time_required'].append(total_time)
+    df_data['number_of_transactions'].append(succesfull_transactions)
+
+df=pd.DataFrame.from_dict(df_data)
+df.plot(kind='line',x='time_required',y='number_of_transactions')
+plt.show()
+
+
+
+
+
 
 
 
