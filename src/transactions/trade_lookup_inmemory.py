@@ -25,9 +25,9 @@ for file in tables:
     df.to_sql(file, conn, if_exists='append', index =False)
     
 sql=open('./SQLite_TPC-E/scripts/4_create_index.sql')
-cur.executescript(sql)
+cur.executescript(sql, mode='r', encoding='utf-8-sig').read()
 sql=open('./SQLite_TPC-E/scripts/4_create_fk_index.sql')
-cur.executescript(sql)
+cur.executescript(sql,mode='r', encoding='utf-8-sig').read()
 
 print('indexes created ')
 
