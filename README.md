@@ -4,5 +4,3 @@
 * SQLite DB
 #### pip requirements:
 * glob
-
-Something
