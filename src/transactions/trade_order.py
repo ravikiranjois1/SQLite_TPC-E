@@ -6,21 +6,25 @@ Authors:
 2. Karanjit Singh
 3. Suhas Vijayakumar
 """
-
+import json
 import sqlite3
 from random import randrange
 from datetime import datetime
 import time
+import pandas as pd
+import matplotlib.pyplot as plt
 
 
 def sqlite_connection():
     conn = sqlite3.connect('tpce')
     cur = conn.cursor()
+    cur.execute('select * from trade')
     return conn, cur
 
 
 def frame_1(connection, cursor):
     """Frame 1"""
+    cursor.execute('begin')
     cursor.execute("select ca_id from CUSTOMER_ACCOUNT")
     ca_id_fetch = cursor.fetchall()
     list_of_ca_ids = ca_id_fetch
@@ -73,7 +77,7 @@ def frame_2(connection, cursor, cust_id, acct_id, cust_f_name, cust_l_name, cust
     return exec_f_name, exec_l_name, exec_tax_id
 
 
-def frame_3(connection, cursor, cust_id, acct_id, tax_status):
+def frame_3(connection, cursor, cust_id, acct_id, tax_status, cust_tier):
     """Frame 3"""
     symbol_info = cursor.execute("select t_id, t_tt_id, t_s_symb, t_lifo, t_qty, t_is_cash, t_st_id from TRADE")
     trade_info = cursor.fetchall()
@@ -260,8 +264,8 @@ def frame_3(connection, cursor, cust_id, acct_id, tax_status):
     return comm_rate, trade_quantity, requested_price, type_is_margin, status_id, trade_type_id, symbol, type_is_market, charge_amount, is_lifo, acct_assets
 
 
-def frame_4(connection, cursor, comm_rate, trade_quantity, requested_price, type_is_margin, status_id, exec_f_name,
-            exec_l_name, trade_type_id, type_is_market, charge_amount, broker_id, is_lifo):
+def frame_4(connection, cursor, acct_id, comm_rate, trade_quantity, requested_price, type_is_margin, status_id, exec_f_name,
+            exec_l_name, trade_type_id, symbol, type_is_market, charge_amount, broker_id, is_lifo):
     """Frame-4: Insert the trade"""
     comm_amount = (comm_rate / 100) * trade_quantity * requested_price
     exec_name = exec_f_name + " " + exec_l_name
@@ -296,7 +300,7 @@ def frame_5(connection, cursor, roll_it_back=0):
         cursor.execute("ROLLBACK")
 
 
-def frame_6(connection, cursor):
+def frame_6(connection, cursor, type_is_market):
     """Frame 6"""
     cursor.execute("COMMIT")
     if type_is_market:
@@ -306,14 +310,43 @@ def frame_6(connection, cursor):
     return eAction
 
 
+def executor(connection, cursor):
+    df_data = {'number_of_transactions': [], 'time_required': []}
+    total_time = 0
+    successful_transactions = 0
+    for op in range(3):
+        print('here')
+        start_time = time.time()
+
+        while time.time() < start_time + 60:
+            try:
+                acct_id, cust_id, cust_f_name, cust_l_name, cust_tier, tax_id, tax_status, broker_id = frame_1(
+                    connection, cursor)
+                exec_f_name, exec_l_name, exec_tax_id = frame_2(connection, cursor, cust_id, acct_id, cust_f_name, cust_l_name,
+                                                                cust_tier, tax_id)
+                comm_rate, trade_quantity, requested_price, type_is_margin, status_id, trade_type_id, symbol, type_is_market, charge_amount, is_lifo, acct_assets = frame_3(
+                    connection, cursor, cust_id, acct_id, tax_status, cust_tier)
+                frame_4(connection, cursor, acct_id, comm_rate, trade_quantity, requested_price, type_is_margin, status_id,
+                        exec_f_name, exec_l_name, trade_type_id, symbol, type_is_market, charge_amount, broker_id, is_lifo)
+                frame_5(connection, cursor)
+                eAction = frame_6(connection, cursor, type_is_market)
+                successful_transactions += 1
+            except:
+                # print('haksdb')
+                cursor.execute('rollback')
+
+        end_time = time.time()
+        total_time = total_time + end_time - start_time
+        df_data['time_required'].append(total_time)
+        df_data['number_of_transactions'].append(successful_transactions)
+
+    with open("trade_order.txt", "w") as fp:
+        json.dump(df_data, fp)
+    df = pd.DataFrame.from_dict(df_data)
+    df.plot(kind='line', x='time_required', y='number_of_transactions')
+    plt.show()
+
+
 if __name__ == "__main__":
     connection, cursor = sqlite_connection()
-    acct_id, cust_id, cust_f_name, cust_l_name, cust_tier, tax_id, tax_status, broker_id = frame_1(connection, cursor)
-    exec_f_name, exec_l_name, exec_tax_id = frame_2(connection, cursor, acct_id, cust_f_name, cust_l_name, cust_tier,
-                                                    tax_id)
-    comm_rate, trade_quantity, requested_price, type_is_margin, status_id, trade_type_id, symbol, type_is_market, charge_amount, is_lifo, acct_assets = frame_3(
-        connection, cursor, cust_id, acct_id, tax_status)
-    frame_4(connection, cursor, comm_rate, trade_quantity, requested_price, type_is_margin, status_id, exec_f_name,
-            exec_l_name, trade_type_id, symbol, type_is_market, charge_amount, broker_id, is_lifo)
-    frame_5(connection, cursor)
-    eAction = frame_6(connection, cursor)
+    executor(connection, cursor)

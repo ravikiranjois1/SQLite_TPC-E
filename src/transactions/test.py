@@ -8,6 +8,7 @@ conn= sqlite3.connect(':memory;')
 cur =conn.cursor()
 
 
+
 #frame_1
 def frame1():
     cur.execute("SELECT min(t_id),max(t_id) from trade order by t_id")

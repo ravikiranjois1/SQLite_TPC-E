@@ -6,7 +6,28 @@ import matplotlib.pyplot as plt
 
 conn= sqlite3.connect(':memory;')
 cur =conn.cursor()
+#create tables
+print('creating tables')
+sql = open('./scripts/scripts/1_create_table.sql', mode='r', encoding='utf-8-sig').read()
+cur.executescript(sql)
+print('tables created')
 
+
+disk_conn=sqlite3.connect('tpce')
+disk_cur=disk_conn.cursor()
+disk_cur.execute("select name from sqlite_master where type='table';")
+tables=disk_cur.fetchall()
+tables=[t[0] for t in tables]
+for file in tables:
+    print(file)
+    query='select * from {};'.format(file)
+    df=pd.read_sql_query(query,disk_conn)
+    df.to_sql(file, conn, if_exists='append', index =False)
+    
+
+
+cur.execute('select * from trade limit 10;')
+print(cur.fetchall())
 
 #frame_1
 def frame1():
