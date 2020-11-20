@@ -16,9 +16,3 @@ for file in glob.glob("./flat_out/*.txt"):
             csv_rows.append(csv_row)
         with open('./raw_data/'+table_name+'.csv','w') as output:
             output.writelines(csv_rows)
-
-
-
-
-
-

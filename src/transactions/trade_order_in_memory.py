@@ -327,9 +327,10 @@ def frame_6(connection, cursor, type_is_market):
 def executor(connection, cursor):
     df_data = {'number_of_transactions': [], 'time_required': []}
     total_time = 0
+
+    cur.execute("PRAGMA journal_mode=WAL;")
     successful_transactions = 0
-    for op in range(5):
-        print('here')
+    for op in range(20):
         start_time = time.time()
 
         while time.time() < start_time + 60:
@@ -350,16 +351,15 @@ def executor(connection, cursor):
 
         end_time = time.time()
         total_time = total_time + end_time - start_time
-        df_data['time_required'].append(total_time)
+        df_data['time_required'].append((op+1)*60)
         df_data['number_of_transactions'].append(successful_transactions)
 
-    with open("trade_order_in_memory.txt", "w") as fp:
+    with open("trade_order_inmemory.json", "w") as fp:
         json.dump(df_data, fp)
-    df = pd.DataFrame.from_dict(df_data)
-    df.plot(kind='line', x='time_required', y='number_of_transactions')
-    plt.show()
+    # df = pd.DataFrame.from_dict(df_data)
+    # df.plot(kind='line', x='time_required', y='number_of_transactions')
+    # plt.show()
 
 
 if __name__ == "__main__":
     executor(conn, cur)
-

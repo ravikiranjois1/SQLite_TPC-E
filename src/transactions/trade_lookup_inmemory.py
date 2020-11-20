@@ -1,3 +1,4 @@
+import json
 import sqlite3
 import random
 import time
@@ -8,7 +9,7 @@ conn= sqlite3.connect(':memory;')
 cur =conn.cursor()
 #create tables
 print('creating tables')
-sql = open('./scripts/scripts/1_create_table.sql', mode='r', encoding='utf-8-sig').read()
+sql = open('./SQLite_TPC-E/scripts/1_create_table.sql', mode='r', encoding='utf-8-sig').read()
 cur.executescript(sql)
 print('tables created')
 
@@ -24,15 +25,15 @@ for file in tables:
     df=pd.read_sql_query(query,disk_conn)
     df.to_sql(file, conn, if_exists='append', index =False)
     
-sql=open('./SQLite_TPC-E/scripts/4_create_index.sql')
-cur.executescript(sql, mode='r', encoding='utf-8-sig').read()
-sql=open('./SQLite_TPC-E/scripts/4_create_fk_index.sql')
-cur.executescript(sql,mode='r', encoding='utf-8-sig').read()
+sql=open('./SQLite_TPC-E/scripts/4_create_index.sql', mode='r', encoding='utf-8-sig').read()
+cur.executescript(sql)
+sql=open('./SQLite_TPC-E/scripts/4_create_fk_index.sql', mode='r', encoding='utf-8-sig').read()
+cur.executescript(sql)
 
 print('indexes created ')
 
-#cur.execute('select * from trade limit 10;')
-#print(cur.fetchall())
+cur.execute('select * from trade limit 10;')
+print(cur.fetchall())
 
 #frame_1
 def frame1():
@@ -294,7 +295,9 @@ df_data={'number_of_transactions':[],'time_required':[]}
 succesfull_transactions=0
 total_time=0
 
-for op in range(5):
+cur.execute("PRAGMA journal_mode=WAL;")
+
+for op in range(20):
     #print('here')
     start_time=time.time()
 
@@ -339,31 +342,12 @@ for op in range(5):
     #print((op+1)*1000,'trasactions attempted')
     end_time=time.time()
     total_time+=end_time-start_time
-    df_data['time_required'].append(total_time)
+    df_data['time_required'].append((op+1)*60)
     df_data['number_of_transactions'].append(succesfull_transactions)
 
-df=pd.DataFrame.from_dict(df_data)
-df.plot(kind='line',x='time_required',y='number_of_transactions')
-plt.show()
+# df=pd.DataFrame.from_dict(df_data)
+# df.plot(kind='line',x='time_required',y='number_of_transactions')
+# plt.show()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-
-
+with open("trade_lookup_inmemory.json", "w") as fp:
+    json.dump(df_data, fp)

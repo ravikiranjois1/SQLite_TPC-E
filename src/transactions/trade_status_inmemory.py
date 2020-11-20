@@ -1,3 +1,4 @@
+import json
 import sqlite3
 import random
 import time
@@ -21,14 +22,14 @@ for file in tables:
     df=pd.read_sql_query(query,disk_conn)
     df.to_sql(file, conn, if_exists='append', index =False)
     
-sql=open('./SQLite_TPC-E/scripts/4_create_index.sql')
+sql=open('./SQLite_TPC-E/scripts/4_create_index.sql', mode='r', encoding='utf-8-sig').read()
 cur.executescript(sql)
-sql=open('./SQLite_TPC-E/scripts/4_create_fk_index.sql')
+sql=open('./SQLite_TPC-E/scripts/4_create_fk_index.sql', mode='r', encoding='utf-8-sig').read()
 cur.executescript(sql)
 
 print('indexes created ')
 
-def frame1():    
+def frame1():
     numfound = 0
     cur.execute("Select ca_id from customer_account")
 
@@ -86,7 +87,7 @@ df_data={'number_of_transactions':[],'time_required':[]}
 succesfull_transactions=0
 total_time=0
 
-for op in range(5):
+for op in range(20):
     #print('here')
     start_time=time.time()
 
@@ -106,9 +107,9 @@ for op in range(5):
     df_data['time_required'].append(total_time)
     df_data['number_of_transactions'].append(succesfull_transactions)
 
-df=pd.DataFrame.from_dict(df_data)
-df.plot(kind='line',x='time_required',y='number_of_transactions')
-plt.show()
+# df=pd.DataFrame.from_dict(df_data)
+# df.plot(kind='line',x='time_required',y='number_of_transactions')
+# plt.show()
 
-
-
+with open("trade_status_inmemory.json", "w") as fp:
+    json.dump(df_data, fp)

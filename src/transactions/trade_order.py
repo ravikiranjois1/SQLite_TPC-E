@@ -340,11 +340,11 @@ def executor(connection, cursor):
         df_data['time_required'].append(total_time)
         df_data['number_of_transactions'].append(successful_transactions)
 
-    with open("trade_order.txt", "w") as fp:
+    with open("trade_order.json", "w") as fp:
         json.dump(df_data, fp)
-    df = pd.DataFrame.from_dict(df_data)
-    df.plot(kind='line', x='time_required', y='number_of_transactions')
-    plt.show()
+    # df = pd.DataFrame.from_dict(df_data)
+    # df.plot(kind='line', x='time_required', y='number_of_transactions')
+    # plt.show()
 
 
 if __name__ == "__main__":
