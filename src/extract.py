@@ -1,6 +1,15 @@
+"""
+Program that extracts data from flat_out data files and creates csv files under raw data
+
+Authors:
+1. Ravikiran Jois Yedur Prabhakar
+2. Karanjit Singh
+3. Suhas Vijayakumar
+"""
+
+
 import glob
 import sqlite3
-
 
 conn=sqlite3.connect('tpce')
 cur=conn.cursor()

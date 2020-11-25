@@ -1,3 +1,12 @@
+"""
+Program that implements TPC-E benchmark method in-memory: Trade Order
+
+Authors:
+1. Ravikiran Jois Yedur Prabhakar
+2. Karanjit Singh
+3. Suhas Vijayakumar
+"""
+
 import sqlite3
 import random
 import time
