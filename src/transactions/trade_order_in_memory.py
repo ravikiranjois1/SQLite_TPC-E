@@ -365,9 +365,6 @@ def executor(connection, cursor):
 
     with open("trade_order_inmemory.json", "w") as fp:
         json.dump(df_data, fp)
-    # df = pd.DataFrame.from_dict(df_data)
-    # df.plot(kind='line', x='time_required', y='number_of_transactions')
-    # plt.show()
 
 
 if __name__ == "__main__":

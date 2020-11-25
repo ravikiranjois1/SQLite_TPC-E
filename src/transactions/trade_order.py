@@ -332,7 +332,6 @@ def executor(connection, cursor):
                 eAction = frame_6(connection, cursor, type_is_market)
                 successful_transactions += 1
             except:
-                # print('haksdb')
                 cursor.execute('rollback')
 
         end_time = time.time()
@@ -342,9 +341,6 @@ def executor(connection, cursor):
 
     with open("trade_order.json", "w") as fp:
         json.dump(df_data, fp)
-    # df = pd.DataFrame.from_dict(df_data)
-    # df.plot(kind='line', x='time_required', y='number_of_transactions')
-    # plt.show()
 
 
 if __name__ == "__main__":

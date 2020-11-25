@@ -78,10 +78,6 @@ def frame1():
         s_name.append(S_name)
         ex_name.append(Ex_name)
 
-    #print(numfound)
-    #print("For custormer ", customer, " The trade info is:")
-    #print(trade_id, trade_dts, trade_qty, exec_name, status_name, symbol, charge, s_name, ex_name, type_name)
-    #print()
 
     query = '''Select c_l_name, c_f_name, b_name from CUSTOMER_ACCOUNT, CUSTOMER, BROKER
     where CA_ID = {} and C_ID = CA_C_ID and B_ID = CA_B_ID'''.format(customer)
@@ -117,9 +113,6 @@ for op in range(20):
     df_data['time_required'].append(total_time)
     df_data['number_of_transactions'].append(succesfull_transactions)
 
-# df=pd.DataFrame.from_dict(df_data)
-# df.plot(kind='line',x='time_required',y='number_of_transactions')
-# plt.show()
 
 with open("trade_status_inmemory.json", "w") as fp:
     json.dump(df_data, fp)

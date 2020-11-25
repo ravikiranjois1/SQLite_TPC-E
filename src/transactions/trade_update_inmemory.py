@@ -77,9 +77,7 @@ def frame1():
                 query = '''Update Trade 
                 Set t_exec_name = "{}" where t_id = {}'''.format(n, trade_id[i])
                 num_updated += 1
-                
-    #print("Number of rows found: ", num_found)
-    #print("Number of rows updated: ", num_updated)
+
 
     for i in trade_id:
         query = '''Select t_bid_price, t_exec_name, t_is_cash, tt_is_mrkt, t_trade_price from trade, trade_type
@@ -225,9 +223,6 @@ def frame3():
                pass
 
 
-    #print("Number of rows found: ", num_found)
-    #print("Number of rows updated: ", num_updated)
-
 df_data={'number_of_transactions':[],'time_required':[]}
 succesfull_transactions=0
 total_time=0
@@ -264,9 +259,6 @@ for op in range(20):
     df_data['number_of_transactions'].append(succesfull_transactions)
     print('succesful transactions ', succesfull_transactions)
 
-# df=pd.DataFrame.from_dict(df_data)
-# df.plot(kind='line',x='time_required',y='number_of_transactions')
-# plt.show()
 
 with open("trade_update_inmemory.json", "w") as fp:
     json.dump(df_data, fp)
