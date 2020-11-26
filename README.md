@@ -1,5 +1,16 @@
 # SQLite_TPC-E
-## steps:
+## authors
+* Suhas Chikkanaravangala Vijayakumar
+* Ravikiran Jois Yedur Prabhakar
+* Karanjit Singh
+
+## pip requirements
+* glob
+* sqlite3
+* pandas
+* matplotlib
+* numpy
+
 ### TPC_E-generation
 * Generate the flat out files from TPC-E benchmark available at [http://www.tpc.org/tpce/](http://www.tpc.org/tpce/) 
 * after generating the flat out make a directory named 'raw-data' in root folder
@@ -20,7 +31,7 @@
 * note logging should be turned on using ```PRAGMA journal_mode=WAL;```
 * All the data(operations performed) will be stored .json files
 #### Visualize Performance
-*visualize the performance of different database configurations 
+* visualize the performance of different database configurations 
  ```
  python3 ./src/plot.py
  ```
