@@ -1,9 +1,18 @@
-import json
+"""
+Program that implements TPC-E benchmark method on-disk: Trade Lookup
+
+Authors:
+1. Ravikiran Jois Yedur Prabhakar
+2. Karanjit Singh
+3. Suhas Vijayakumar
+"""
+
 import sqlite3
 import random
 import time
 import pandas as pd
 import matplotlib.pyplot as plt
+import json
 
 conn= sqlite3.connect(':memory;')
 cur =conn.cursor()
@@ -317,9 +326,29 @@ for op in range(20):
     df_data['time_required'].append((op+1)*60)
     df_data['number_of_transactions'].append(succesfull_transactions)
 
-# df=pd.DataFrame.from_dict(df_data)
-# df.plot(kind='line',x='time_required',y='number_of_transactions')
-# plt.show()
+df=pd.DataFrame.from_dict(df_data)
+df.plot(kind='line',x='time_required',y='number_of_transactions')
+plt.show()
 
 with open("trade_lookup.json", "w") as fp:
     json.dump(df_data, fp)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+
+

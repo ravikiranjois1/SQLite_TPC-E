@@ -1,5 +1,5 @@
 """
-Program that implements TPC-E benchmark method on disk: Trade Order
+Program that implements TPC-E benchmark method on-disk: Trade Order
 
 Authors:
 1. Ravikiran Jois Yedur Prabhakar
