@@ -1,4 +1,5 @@
-# SQLite_TPC-E
+# Evaluating the performance of SQLite DB using TPC-E Benchmark
+
 ## authors
 * Suhas Chikkanaravangala Vijayakumar
 * Ravikiran Jois Yedur Prabhakar
